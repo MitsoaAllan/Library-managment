@@ -1,2 +1,2 @@
-# Library-managment
-Library managment
+# Library managment
+Making library managment easier
