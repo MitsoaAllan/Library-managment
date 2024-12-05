@@ -1,0 +1,218 @@
+openapi: 3.0.0
+info:
+  title: Library Management System
+  description: API to manage books and authors
+  contact:
+    email: hei.mitsoa@gmail.com
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/HEIMITSOA/LibraryManagment/1.0.0
+  description: SwaggerHub API Auto Mocking
+paths:
+  /books:
+    get:
+      summary: Collect a list of books
+      parameters:
+      - name: bookName
+        in: query
+        description: Filter by book name
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: releaseDateBegins
+        in: query
+        description: Date release begining
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          format: date
+      - name: releaseDateFinishes
+        in: query
+        description: Date release finishing
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          format: date
+      responses:
+        "200":
+          description: List of books collected
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+    post:
+      summary: Add a new book
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+        required: true
+      responses:
+        "201":
+          description: Book added
+  /books/{bookId}:
+    put:
+      summary: Update an existing book
+      description: Update a book (idempotent operation).
+      parameters:
+      - name: bookId
+        in: path
+        description: The ID of the book to update
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+        required: true
+      responses:
+        "200":
+          description: Book has been updated
+    delete:
+      summary: Remove a book
+      description: Remove a book by ID.
+      parameters:
+      - name: bookId
+        in: path
+        description: The ID of the book to delete
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: Book has been deleted
+  /authors:
+    get:
+      summary: Collect a list of authors
+      description: Collect a list of authors which can be filtered by name.
+      parameters:
+      - name: authorName
+        in: query
+        description: Filter by author name
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: List of authors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Author'
+    post:
+      summary: Add a new author
+      description: Add a new author to the library.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Author'
+        required: true
+      responses:
+        "201":
+          description: Author has been added
+  /authors/{authorId}:
+    put:
+      summary: Update an author
+      description: Update an author (idempotent operation).
+      parameters:
+      - name: authorId
+        in: path
+        description: The ID of the author to update
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Author'
+        required: true
+      responses:
+        "200":
+          description: Author has been updated
+    delete:
+      summary: Remove an author
+      description: Remove an author by ID.
+      parameters:
+      - name: authorId
+        in: path
+        description: The ID of the author to delete
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: Author has been deleted
+components:
+  schemas:
+    Book:
+      required:
+      - author
+      - bookName
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique ID of the book
+        bookName:
+          type: string
+          description: Name of the book
+        author:
+          type: string
+          description: Name of the author
+        pageNumbers:
+          type: integer
+          description: Number of pages
+        topic:
+          type: string
+          description: Genre of the book
+          enum:
+          - ROMANCE
+          - COMEDY
+          - OTHER
+        releaseDate:
+          type: string
+          description: Release date of the book
+          format: date
+    Author:
+      required:
+      - name
+      - sex
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique ID of the author
+        name:
+          type: string
+          description: Name of the author
+        sex:
+          type: string
+          description: Gender of the author
+          enum:
+          - M
+          - F
