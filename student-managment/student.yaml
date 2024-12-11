@@ -1,0 +1,233 @@
+openapi: 3.0.0
+info:
+  title: Student Management System
+  description: API to manage students and groups
+  contact:
+    email: hei.mitsoa@gmail.com
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/HEIMITSOA/student-managment/1.0.0
+  description: SwaggerHub API Auto Mocking
+paths:
+  /groups:
+    get:
+      summary: Collect a list of groups
+      parameters:
+      - name: groupName
+        in: query
+        description: Filter by group name
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: releaseDateBegins
+        in: query
+        description: Date release begining
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          format: date
+      - name: releaseDateFinishes
+        in: query
+        description: Date release finishing
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          format: date
+      responses:
+        "200":
+          description: List of groups collected
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+    post:
+      summary: Add a new group
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+        required: true
+      responses:
+        "201":
+          description: group added
+  /groups/{groupId}:
+    put:
+      summary: Update an existing group
+      description: Update a group (idempotent operation).
+      parameters:
+      - name: groupId
+        in: path
+        description: The ID of the group to update
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+        required: true
+      responses:
+        "200":
+          description: group has been updated
+    delete:
+      summary: Remove a group
+      description: Remove a group by ID.
+      parameters:
+      - name: groupId
+        in: path
+        description: The ID of the group to delete
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: group has been deleted
+  /students:
+    get:
+      summary: Collect a list of students
+      description: Collect a list of students which can be filtered by name.
+      parameters:
+      - name: studentName
+        in: query
+        description: Filter by student name
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: List of students
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+    post:
+      summary: Add a new student
+      description: Add a new student to the library.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+        required: true
+      responses:
+        "201":
+          description: student has been added
+  /students/{studentId}:
+    put:
+      summary: Update a student
+      description: Update a student's information (idempotent operation).
+      parameters:
+      - name: studentId
+        in: path
+        description: The ID of the student to update
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+        required: true
+      responses:
+        "200":
+          description: student has been updated
+    delete:
+      summary: Remove a student
+      description: Remove a student by ID.
+      parameters:
+      - name: studentId
+        in: path
+        description: The ID of the student to delete
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: student has been deleted
+components:
+  schemas:
+    Group:
+      required:
+      - groupName
+      - promotion
+      - student
+      - studentNumber
+      - year
+      type: object
+      properties:
+        groupId:
+          type: integer
+          description: Unique ID of the group
+        groupName:
+          type: string
+          description: Name of the group
+        year:
+          type: string
+          description: promotion year
+          format: date
+        promotion:
+          type: string
+          enum:
+          - G
+          - H
+          - J
+          - K
+        studentNumber:
+          type: integer
+          description: Number of students
+        student:
+          type: object
+          description: Name of the student
+    Student:
+      required:
+      - birthdate
+      - group
+      - name
+      - reference
+      - sex
+      type: object
+      properties:
+        studentId:
+          type: integer
+          description: Unique ID of the student
+        name:
+          type: string
+          description: Name of the student
+        sex:
+          type: string
+          description: Gender of the student
+          enum:
+          - M
+          - F
+        birthdate:
+          type: string
+          format: date
+        reference:
+          type: string
+          description: student's STD number
+        group:
+          type: object
+          description: Name of the group
